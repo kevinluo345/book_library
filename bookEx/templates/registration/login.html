@@ -1,12 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block sidenav %}
-      <li>
-        <a href="/">  Home </a>
-      </li>
-{% endblock sidenav %}
-
 {% block content %}
   <h1>User Login</h1>
     <form action="{% url 'login' %}" method="post">

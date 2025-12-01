@@ -126,3 +126,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'bookEx/static')
 ]
+
+# Redirect to login page when @login_required decorator is triggered
+LOGIN_URL = '/login/'

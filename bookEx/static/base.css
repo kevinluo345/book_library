@@ -1,152 +1,340 @@
-/* General Reset */
+/* Modern UI Revamp - BookEx */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --dark-bg: #1a1a2e;
+    --card-bg: #ffffff;
+    --text-primary: #2d3748;
+    --text-secondary: #718096;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Body and Layout */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     line-height: 1.6;
-    background-color: #f4f4f4;
-    color: #333;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
 }
 
-/* Header (Banner) */
-header {
-    background: #333;
+/* Modern Header with Gradient */
+.modern-header {
+    background: var(--primary-gradient);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.3;
+}
+
+.brand-logo {
+    font-size: 2rem;
+    font-weight: 700;
     color: white;
-    padding: 12px 0 0 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.header-top {
+.brand-logo i {
+    font-size: 2.5rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.auth-section {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 12px 20px;
+    justify-content: flex-end;
 }
 
-.banner h1 {
-    margin: 0;
-    font-size: 1.5rem;
-}
-
-.auth { color: #fff; }
-
-/* Container for Sidebar and Content */
-.container {
-    display: block;
-    min-height: 80vh;
-    padding: 20px;
-}
-
-/* Sidebar (Main Menu) */
-.sidebar {
-    width: 100%;
-    background-color: #333;
+.user-badge {
+    background: rgba(255,255,255,0.2);
+    padding: 8px 16px;
+    border-radius: 50px;
     color: white;
-    padding: 10px 20px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
 }
 
-.sidebar ul {
-    list-style-type: none;
-    padding: 0;
-    display: flex !important;
-    flex-direction: row !important;
-    /* make the UL span the full content width and center it to match header-top */
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    justify-content: space-between !important; /* spread items across the available width */
-    gap: 12px !important; /* slimmer spacing between items */
-    flex-wrap: nowrap; /* keep items on one line */
-    white-space: nowrap;
-    overflow-x: auto; /* allow horizontal scroll on very small screens */
+/* Sleek Navigation Bar */
+.modern-navbar {
+    background: white;
+    box-shadow: var(--shadow-sm);
+    border-bottom: 2px solid var(--border-color);
+    padding: 12px 0;
 }
 
-/* Ensure nav sits below floated header content */
-header::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-/* Make sidebar a horizontal bar and allow wrapping on small screens */
-.sidebar {
-    display: block;
-    padding: 6px 0; /* slimmer vertical padding; left/right controlled by ul's max-width */
-    background-color: #333;
-}
-.sidebar > ul { /* higher specificity: direct child ul of sidebar */
-    margin: 0;
-    display: flex !important;
-    flex-direction: row !important;
+.navbar-nav .nav-link {
+    color: var(--text-primary);
+    font-weight: 500;
+    padding: 10px 18px;
+    border-radius: 8px;
+    transition: var(--transition);
+    display: flex;
     align-items: center;
-    padding: 0 20px; /* horizontal padding inside the max-width */
+    gap: 8px;
 }
 
-.sidebar > ul > li {
-    flex: 0 0 auto !important; /* don't stretch; keep only as wide as content */
-    white-space: nowrap;
-}
-/* Strong override to force horizontal layout across the site and help debug caching/override issues. */
-/* High-specificity, full-width nav bar that overrides other rules.
-   Uses body > header to increase specificity and !important to prevent overrides. */
-body > header > nav.sidebar {
-    width: 100% !important;
-    background: #222 !important; /* visible background */
-}
-
-body > header > nav.sidebar > ul {
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-evenly !important; /* spread items evenly across full width */
-    align-items: center !important;
-    gap: 12px !important;
-    padding: 6px 12px !important;
-}
-
-body > header > nav.sidebar > ul > li {
-    display: inline-flex !important;
-    flex: 0 0 auto !important;
-    white-space: nowrap !important;
-}
-
-/* Visible diagnostic styling to confirm the nav bar area */
-body > header > nav.sidebar { box-shadow: inset 0 -2px 0 rgba(255,255,255,0.03); }
-
-/* Force horizontal layout for nav items in case other styles interfere */
-.sidebar, .sidebar ul, .sidebar ul li { width: auto; }
-.sidebar ul li { display: inline-flex !important; }
-
-/* Make sure anchors don't stretch and keep them inline */
-.sidebar ul li a {
-    display: inline-block;
-    padding: 4px 6px; /* smaller touch/click area for a slimmer bar */
-    font-size: 15px;
-}
-
-/* Add spacing below the banner so nav sits clearly underneath */
-.banner { padding-bottom: 6px; }
-
-.sidebar ul li {
-    display: inline-block;
-}
-
-.sidebar ul li a {
+.navbar-nav .nav-link:hover {
+    background: var(--primary-gradient);
     color: white;
-    text-decoration: none;
-    font-size: 16px;
-    padding: 6px 8px;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
-.sidebar ul li a:hover {
-    text-decoration: underline;
+.navbar-nav .nav-link i {
+    font-size: 1.1rem;
+}
+
+/* Main Content Area */
+.main-content {
+    min-height: calc(100vh - 200px);
+    padding: 20px 0;
+}
+
+/* Enhanced Card Styles */
+.card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    overflow: hidden;
+    background: var(--card-bg);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+    border: none;
+    border-radius: 16px 16px 0 0 !important;
+    font-weight: 600;
+    padding: 16px 20px;
+}
+
+/* Gradient Backgrounds for Cards */
+.bg-primary {
+    background: var(--primary-gradient) !important;
+}
+
+.bg-success {
+    background: var(--success-gradient) !important;
+}
+
+.bg-warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+}
+
+.bg-danger {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
+}
+
+.bg-info {
+    background: linear-gradient(135deg, #30cfd0 0%, #330867 100%) !important;
+}
+
+/* Modern Tables */
+.table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.table thead {
+    background: var(--primary-gradient);
+    color: white;
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(102, 126, 234, 0.05);
+    transform: scale(1.01);
+    transition: var(--transition);
+}
+
+/* Modern Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-weight: 500;
+    transition: var(--transition);
+    border: none;
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-success {
+    background: var(--success-gradient);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.btn-outline-primary {
+    border: 2px solid #667eea;
+    color: #667eea;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-gradient);
+    color: white;
+    border-color: transparent;
+}
+
+.btn-outline-light {
+    border: 2px solid rgba(255,255,255,0.5);
+}
+
+.btn-outline-light:hover {
+    background: white;
+    color: #667eea;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 16px;
+    transition: var(--transition);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+/* Badges */
+.badge {
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-weight: 500;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 12px;
+    border: none;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Animations */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert {
+    animation: slideInDown 0.4s ease-out;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .brand-logo {
+        font-size: 1.5rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 8px 12px;
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-gradient);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #764ba2;
+}
+
+/* Loading Animation */
+.spinner-border {
+    border-color: #667eea;
+    border-right-color: transparent;
+}
+
+/* Stat Cards Enhancement */
+.card-body h2, .card-body h3, .card-body h4 {
+    font-weight: 700;
+}
+
+/* Icon Styling */
+.bi {
+    transition: var(--transition);
+}
+
+.card:hover .bi, .btn:hover .bi {
+    transform: scale(1.1);
+}
+
+/* Footer Styles (if needed) */
+footer {
+    background: var(--dark-bg);
+    color: white;
+    padding: 30px 0;
+    margin-top: 60px;
+}
+
+/* Jumbotron Modern Style */
+.jumbotron {
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    padding: 3rem 2rem !important;
 }
 
 /* Main Content */

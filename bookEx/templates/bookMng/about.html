@@ -7,21 +7,6 @@
   <link rel="stylesheet" href="{% static 'displaybook.css' %}">
 {% endblock %}
 
-{% block sidenav %}
-  <li><a href="{% url 'index' %}">Home</a></li>
-  <li><a href="{% url 'displaybooks' %}">Display Books</a></li>
-  <li><a href="{% url 'mybooks' %}">My Books</a></li>
-  <li><a href="{% url 'postbook' %}">Post Book</a></li>
-  <li><a href="{% url 'about' %}">About</a></li>
-  <li><a href="{% url 'cart-view' %}">Cart</a></li>
-  <li>
-    <form action="{% url 'search' %}" method="get" style="display:inline;">
-      <input type="text" name="q" placeholder="Search..." required style="padding:2px 6px;">
-      <button type="submit" style="padding:2px 8px;">Search</button>
-    </form>
-  </li>
-{% endblock sidenav %}
-
 {% block content %}
   <h1>About Us</h1>
   <p>Welcome to Book Keep. This is a simple demo application for posting and rating books.</p>

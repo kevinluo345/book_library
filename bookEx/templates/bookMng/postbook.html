@@ -3,21 +3,6 @@
 
 {% block banner_title %}Books for Sale{% endblock %}
 
-{% block sidenav %}
-   <li><a href="{% url 'index' %}">Home</a></li>
-   <li><a href="{% url 'displaybooks' %}">Display Books</a></li>
-   <li><a href="{% url 'mybooks' %}">My Books</a></li>
-   <li><a href="{% url 'postbook' %}">Post Book</a></li>
-   <li><a href="{% url 'about' %}">About</a></li>
-   <li><a href="{% url 'cart-view' %}">Cart</a></li>
-   <li>
-      <form action="{% url 'search' %}" method="get" style="display:inline;">
-         <input type="text" name="q" placeholder="Search..." required style="padding:2px 6px;">
-         <button type="submit" style="padding:2px 8px;">Search</button>
-      </form>
-   </li>
-{% endblock sidenav %}
-
 {% block content %}
   <div class="container-fluid">
     <h1 class="mb-4"><i class="bi bi-book"></i> Post Book</h1>

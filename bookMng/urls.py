@@ -16,6 +16,9 @@ urlpatterns = [
     # alias for legacy link
     path('aboutus', views.about, name='aboutus'),
     path('person/<slug:slug>/', views.person_profile, name='person'),
+    
+    # Dashboard
+    path('dashboard/', views.dashboard, name='dashboard'),
 
     #--------------------------- ADDED ---------------------------#
         # Search
@@ -26,4 +29,8 @@ urlpatterns = [
     path("cart/add/<int:pk>/", views.cart_add, name="cart-add"),
     path("cart/remove/<int:pk>/", views.cart_remove, name="cart-remove"),
     path("cart/clear/", views.cart_clear, name="cart-clear"),
+    
+    # Favorites
+    path("favorites/", views.favorites, name="favorites"),
+    path("favorite/toggle/<int:book_id>/", views.favorite_toggle, name="favorite-toggle"),
 ]

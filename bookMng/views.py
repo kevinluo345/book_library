@@ -3,20 +3,23 @@ from django.http import HttpResponse
 from .models import MainMenu
 from .forms import BookForm, ReviewForm, SearchForm
 from django.http import HttpResponseRedirect
-from .models import Book
+from .models import Book, Review, Message
 from .forms import RatingForm
-from .models import Rating
+from .models import Rating, Favorite
 from django import forms
 
 from django.views.generic.edit import CreateView
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse, reverse_lazy
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Sum, Max
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.views.decorators.http import require_POST
 from django.db import models
+from django.contrib.auth.models import User
+from datetime import timedelta
+from django.utils import timezone
 
 
 
@@ -62,8 +65,16 @@ def displaybooks(request):
         avg_rating=Avg('rating__value'),
         rating_count=Count('rating')
     )
+    
+    # Get user's favorited book IDs if authenticated
+    user_favorites = []
+    if request.user.is_authenticated:
+        user_favorites = Favorite.objects.filter(user=request.user).values_list('book_id', flat=True)
+    
     for b in books:
         b.pic_path = b.picture.url[14:]
+        b.is_favorited = b.id in user_favorites
+        
     return render(request,
                   'bookMng/displaybooks.html',
                   {
@@ -347,3 +358,117 @@ def search(request):
     return render(request, "bookMng/search.html", {
         "form": form, "query": query, "books": books, "item_list": []
     })
+
+# ---------- FAVORITES ----------
+@login_required
+def favorites(request):
+    """Display user's favorite books"""
+    user_favorites = Favorite.objects.filter(user=request.user).select_related('book')
+    books = []
+    
+    for fav in user_favorites:
+        book = fav.book
+        # Add rating annotations
+        book.avg_rating = book.rating_set.aggregate(Avg('value'))['value__avg']
+        book.rating_count = book.rating_set.count()
+        books.append(book)
+    
+    return render(request, 'bookMng/favorites.html', {
+        'books': books,
+        'favorites_count': len(books)
+    })
+
+@login_required
+@require_POST
+def favorite_toggle(request, book_id):
+    """Add or remove book from favorites"""
+    book = get_object_or_404(Book, id=book_id)
+    favorite = Favorite.objects.filter(user=request.user, book=book).first()
+    
+    if favorite:
+        favorite.delete()
+        messages.success(request, f"Removed '{book.name}' from favorites")
+    else:
+        Favorite.objects.create(user=request.user, book=book)
+        messages.success(request, f"Added '{book.name}' to favorites")
+    
+    return redirect(request.META.get('HTTP_REFERER', 'displaybooks'))
+
+# ---------- DASHBOARD ----------
+def dashboard(request):
+    """Display platform statistics and insights"""
+    
+    # Basic Stats
+    total_books = Book.objects.count()
+    total_users = User.objects.count()
+    total_ratings = Rating.objects.count()
+    total_reviews = Review.objects.count()
+    total_favorites = Favorite.objects.count()
+    
+    # Average rating across all books
+    avg_rating = Rating.objects.aggregate(Avg('value'))['value__avg']
+    
+    # Books with highest ratings
+    top_rated_books = Book.objects.annotate(
+        avg_rating=Avg('rating__value'),
+        rating_count=Count('rating')
+    ).filter(rating_count__gte=1).order_by('-avg_rating')[:5]
+    
+    # Most reviewed books
+    most_reviewed_books = Book.objects.annotate(
+        review_count=Count('reviews')
+    ).filter(review_count__gte=1).order_by('-review_count')[:5]
+    
+    # Most favorited books
+    most_favorited_books = Book.objects.annotate(
+        favorite_count=Count('favorited_by')
+    ).filter(favorite_count__gte=1).order_by('-favorite_count')[:5]
+    
+    # Recently added books
+    recent_books = Book.objects.order_by('-publishdate')[:5]
+    
+    # Top sellers (users with most books posted)
+    top_sellers = User.objects.annotate(
+        book_count=Count('book')
+    ).filter(book_count__gte=1).order_by('-book_count')[:5]
+    
+    # Most active reviewers
+    top_reviewers = User.objects.annotate(
+        review_count=Count('rating')
+    ).filter(review_count__gte=1).order_by('-review_count')[:5]
+    
+    # Price statistics
+    price_stats = Book.objects.aggregate(
+        avg_price=Avg('price'),
+        min_price=models.Min('price'),
+        max_price=Max('price')
+    )
+    
+    # User-specific stats (if logged in)
+    user_stats = None
+    if request.user.is_authenticated:
+        user_stats = {
+            'books_posted': Book.objects.filter(username=request.user).count(),
+            'ratings_given': Rating.objects.filter(user=request.user).count(),
+            'reviews_given': Review.objects.filter(reviewer_name=request.user.username).count(),
+            'favorites_count': Favorite.objects.filter(user=request.user).count(),
+        }
+    
+    context = {
+        'total_books': total_books,
+        'total_users': total_users,
+        'total_ratings': total_ratings,
+        'total_reviews': total_reviews,
+        'total_favorites': total_favorites,
+        'avg_rating': avg_rating,
+        'top_rated_books': top_rated_books,
+        'most_reviewed_books': most_reviewed_books,
+        'most_favorited_books': most_favorited_books,
+        'recent_books': recent_books,
+        'top_sellers': top_sellers,
+        'top_reviewers': top_reviewers,
+        'price_stats': price_stats,
+        'user_stats': user_stats,
+    }
+    
+    return render(request, 'bookMng/dashboard.html', context)

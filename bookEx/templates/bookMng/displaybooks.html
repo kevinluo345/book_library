@@ -5,21 +5,6 @@
    <link rel="stylesheet" href="{% static 'displaybook.css' %}">
 {% endblock %}
 
-{% block sidenav %}
-  <li><a href="{% url 'index' %}">Home</a></li>
-  <li><a href="{% url 'displaybooks' %}">Display Books</a></li>
-  <li><a href="{% url 'mybooks' %}">My Books</a></li>
-  <li><a href="{% url 'postbook' %}">Post Book</a></li>
-  <li><a href="{% url 'about' %}">About</a></li>
-  <li><a href="{% url 'cart-view' %}">Cart</a></li>
-  <li>
-    <form action="{% url 'search' %}" method="get" style="display:inline;">
-      <input type="text" name="q" placeholder="Search..." required style="padding:2px 6px;">
-      <button type="submit" style="padding:2px 8px;">Search</button>
-    </form>
-  </li>
-{% endblock sidenav %}
-
 {% block content %}
     <div class="container-fluid">
       <h1 class="mb-4">Display Books</h1>
@@ -71,15 +56,25 @@
                     Avg: {% if book.avg_rating %}{{ book.avg_rating|floatformat:1 }}{% else %}&mdash;{% endif %}/5 
                     ({{ book.rating_count|default:0 }} reviews)
                   </div>
-                  <form action="{% url 'cart-add' book.id %}" method="post" class="mt-2">
-                    {% csrf_token %}
-                    <div class="input-group input-group-sm" style="max-width: 200px;">
-                      <input type="number" name="quantity" value="1" min="1" class="form-control form-control-sm" style="max-width: 60px;">
-                      <button type="submit" class="btn btn-sm btn-success">
-                        <i class="bi bi-cart-plus"></i> Add to Cart
-                      </button>
-                    </div>
-                  </form>
+                  <div class="d-flex gap-2 mt-2">
+                    <form action="{% url 'cart-add' book.id %}" method="post" class="flex-grow-1">
+                      {% csrf_token %}
+                      <div class="input-group input-group-sm">
+                        <input type="number" name="quantity" value="1" min="1" class="form-control form-control-sm" style="max-width: 60px;">
+                        <button type="submit" class="btn btn-sm btn-success">
+                          <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                      </div>
+                    </form>
+                    {% if user.is_authenticated %}
+                      <form action="{% url 'favorite-toggle' book.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm {% if book.is_favorited %}btn-danger{% else %}btn-outline-danger{% endif %}" title="{% if book.is_favorited %}Remove from favorites{% else %}Add to favorites{% endif %}">
+                          <i class="bi bi-heart{% if book.is_favorited %}-fill{% endif %}"></i>
+                        </button>
+                      </form>
+                    {% endif %}
+                  </div>
                 </td>
                 <td>
                   {% if user.is_authenticated and user.is_superuser or user == book.username %}
